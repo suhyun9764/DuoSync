@@ -18,7 +18,7 @@ jobs:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ EC2_SSH_KEY }}  # GitHub Secrets에서 SSH 키 저장
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}  # GitHub Secrets에서 SSH 키 저장
     
     # EC2 서버에 코드 배포 및 환경 변수 설정
     - name: Deploy to EC2
