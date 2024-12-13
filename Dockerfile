@@ -1,12 +1,21 @@
-# 베이스 이미지로 OpenJDK 사용
 FROM openjdk:17-jdk-slim
 
-# JAR 파일을 컨테이너의 /app 디렉토리에 복사
+# Gradle 설치
+RUN apt-get update && apt-get install -y gradle
+
+# 프로젝트 파일 복사
+COPY . /app
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# Gradle 빌드
+RUN gradle build
+
+# JAR 파일 복사
 COPY build/libs/DuoSync-0.0.1-SNAPSHOT.jar /app/DuoSync.jar
 
-
-# 컨테이너의 8080 포트를 열어줍니다.
 EXPOSE 8080
 
-# JAR 파일을 실행
+# JAR 파일 실행
 ENTRYPOINT ["java", "-jar", "/app/DuoSync.jar"]
