@@ -1,45 +1,20 @@
-name: Deploy to EC2
-
-on:
-  push:
-    branches:
-      - dev  # dev 브랜치에 푸시될 때마다 실행
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    # GitHub에서 소스 코드 클론
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    # SSH를 통해 EC2에 접속
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}  # GitHub Secrets에서 SSH 키 저장
-    
-    # EC2 서버에 코드 배포 및 환경 변수 설정
-    - name: Deploy to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-          cd ~/app/DuoSync
-          git pull origin dev
-          
-          # .env 파일 생성 (필요한 환경 변수 설정)
-          echo "MYSQL_SOURCE=jdbc:${{ secrets.MYSQL_SOURCE }}" > .env
-          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}"" >> .env
-          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
-          echo "OAUTH_NAVER_CLIENT_ID=${{ secrets.OAUTH_NAVER_CLIENT_ID }}" >> .env
-          echo "OAUTH_NAVER_CLIENT_SECRET=${{ secrets.OAUTH_NAVER_CLIENT_SECRET }}" >> .env
-          echo "OAUTH_NAVER_REDIRECT_URI=${{ secrets.OAUTH_NAVER_REDIRECT_URI }}" >> .env
-          echo "OAUTH_GOOGLE_CLIENT_ID=${{ secrets.OAUTH_GOOGLE_CLIENT_ID }}" >> .env
-          echo "OAUTH_GOOGLE_CLIENT_SECRET=${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "OAUTH_GOOGLE_REDIRECT_URI=${{ secrets.OAUTH_GOOGLE_REDIRECT_URI }}" >> .env
-          
-          # Docker Compose로 애플리케이션 시작
-          docker-compose up --build -d
-        EOF
+ssh -o StrictHostKeyChecking=no ubuntu@*** << 'EOF'
+  cd ~/app/DuoSync
+  git pull origin dev
+  
+  # .env 파일 생성 (필요한 환경 변수 설정)
+  echo "MYSQL_SOURCE==***" > .env
+  echo "MYSQL_USER=***" >> .env
+  echo "MYSQL_PASSWORD=***" >> .env
+  echo "REDIS_HOST=***" >> .env
+  echo "JWT_SECRET_KEY=***" >> .env
+  echo "OAUTH_NAVER_CLIENT_ID=***" >> .env
+  echo "OAUTH_NAVER_CLIENT_SECRET=***" >> .env
+  echo "OAUTH_NAVER_REDIRECT_URI=***" >> .env
+  echo "OAUTH_GOOGLE_CLIENT_ID=***" >> .env
+  echo "OAUTH_GOOGLE_CLIENT_SECRET=***" >> .env
+  echo "OAUTH_GOOGLE_REDIRECT_URI=***" >> .env
+  
+  # Docker Compose로 애플리케이션 시작
+  docker-compose up --build -d
+EOF
