@@ -10,16 +10,12 @@ services:
       - .env
     ports:
       - "8080:8080"
-    environment:
-      SPRING_APPLICATION_NAME: DuoSync
-      SPRING_DATASOURCE_URL: ${MYSQL_SOURCE}
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      SPRING_DATA_REDIS_HOST: ${REDIS_HOST}
-      SPRING_DATA_REDIS_PORT: 6379
+
     depends_on:
       - mysql
       - redis
+    networks:
+      - duosync-network
 
   mysql:
     image: mysql:8
@@ -32,6 +28,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - duosync-network
 
   redis:
     image: redis:latest
@@ -39,6 +37,12 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - duosync-network
 
 volumes:
   mysql-data: { }
+
+networks:
+  duosync-network:
+    driver: bridge
