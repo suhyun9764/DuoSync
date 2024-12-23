@@ -9,5 +9,4 @@ public class DuoSyncApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DuoSyncApplication.class, args);
 	}
-
 }

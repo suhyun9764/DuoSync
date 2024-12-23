@@ -1,21 +1,33 @@
-FROM openjdk:17-jdk-slim
+# Step 1: Use a Gradle image to build the application
+FROM gradle:8.3-jdk17 AS builder
 
-# Gradle 설치
-RUN apt-get update && apt-get install -y gradle
-
-# 프로젝트 파일 복사
-COPY . /app
-
-# 작업 디렉토리 설정
+# Set the working directory
 WORKDIR /app
 
-# Gradle 빌드
-RUN gradle build
+# Copy only build-related files
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle gradle
 
-# JAR 파일 복사
-COPY build/libs/DuoSync-0.0.1-SNAPSHOT.jar /app/DuoSync.jar
+# Download dependencies
+RUN ./gradlew dependencies --no-daemon
 
+# Copy application source code
+COPY src src
+
+# Build the application
+RUN ./gradlew bootJar --no-daemon
+
+# Step 2: Use a slim JDK image to run the application
+FROM openjdk:17-jdk-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built jar from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Expose the application port
 EXPOSE 8080
 
-# JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "/app/DuoSync.jar"]
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]

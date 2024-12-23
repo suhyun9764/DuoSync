@@ -19,7 +19,7 @@ services:
 
   mysql:
     image: mysql:8
-    container_name: mysql-container
+    container_name: mysql
     restart : always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -33,7 +33,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis-container
+    container_name: redis
     restart: always
     ports:
       - "6379:6379"
