@@ -1,33 +1,27 @@
-# Step 1: Use a Gradle image to build the application
 FROM gradle:8.3-jdk17 AS builder
-
-# Set the working directory
 WORKDIR /app
 
-# Copy only build-related files
+# 복사
 COPY build.gradle settings.gradle gradlew ./
-COPY gradle gradle
+COPY gradle ./gradle
 
-# Download dependencies
+# gradlew에 실행 권한 추가
+RUN chmod +x gradlew
+
+# 의존성 다운로드
 RUN ./gradlew dependencies --no-daemon
 
-# Copy application source code
-COPY src src
+# 애플리케이션 소스 복사
+COPY src ./src
 
-# Build the application
-RUN ./gradlew bootJar --no-daemon
+# 애플리케이션 빌드
+RUN ./gradlew build --no-daemon
 
-# Step 2: Use a slim JDK image to run the application
 FROM openjdk:17-jdk-slim
-
-# Set the working directory
 WORKDIR /app
 
-# Copy the built jar from the builder stage
+# 빌드된 JAR 복사
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expose the application port
-EXPOSE 8080
-
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# 애플리케이션 실행
+CMD ["java", "-jar", "app.jar"]
